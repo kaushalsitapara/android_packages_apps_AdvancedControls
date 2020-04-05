@@ -39,7 +39,9 @@ public class BootReceiver extends BroadcastReceiver implements Utils {
 
         //FileUtils.setValue(DeviceSettings.QC_LIMIT_PATH, Settings.Secure.getInt(
         //context.getContentResolver(), DeviceSettings.PREF_QC_LIMIT, 2000) * 1000.0);
-
+        int gainSpeaker = Settings.Secure.getInt(context.getContentResolver(),
+                DeviceSettings.PREF_SPEAKER_GAIN, 0);
+        FileUtils.setValue(DeviceSettings.SPEAKER_GAIN_PATH, gain);
         int gain = Settings.Secure.getInt(context.getContentResolver(),
                 DeviceSettings.PREF_HEADPHONE_GAIN, 0);
         FileUtils.setValue(DeviceSettings.HEADPHONE_GAIN_PATH, gain + " " + gain);

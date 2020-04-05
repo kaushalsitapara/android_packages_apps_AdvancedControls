@@ -54,6 +54,8 @@ public class DeviceSettings extends PreferenceFragment implements
     public static final int MAX_VIBRATION = 3596;
 
     // Audio
+    public static final String PREF_SPEAKER_GAIN = "speaker_gain";
+    public static final String SPEAKER_GAIN_PATH = "/sys/kernel/sound_control/speaker_gain";
     public static final  String PREF_HEADPHONE_GAIN = "headphone_gain";
     public static final  String PREF_MICROPHONE_GAIN = "microphone_gain";
     public static final  String HEADPHONE_GAIN_PATH = "/sys/kernel/sound_control/headphone_gain";
@@ -69,6 +71,7 @@ public class DeviceSettings extends PreferenceFragment implements
     //public static final String QC_LIMIT_PATH = "/sys/devices/soc.0/qpnp-smbcharger-16/power_supply/battery/constant_charge_current_max";
 
     private SecureSettingListPreference mSPECTRUM;
+    private SecureSettingCustomSeekBarPreference mSpeakerGain;
     private SecureSettingCustomSeekBarPreference mHeadphoneGain;
     private SecureSettingCustomSeekBarPreference mMicrophoneGain;
 
@@ -85,6 +88,9 @@ public class DeviceSettings extends PreferenceFragment implements
         SecureSettingCustomSeekBarPreference TorchBrightness2 = (SecureSettingCustomSeekBarPreference) findPreference(PREF_TORCH_BRIGHTNESS_2);
         TorchBrightness2.setEnabled(FileUtils.fileWritable(TORCH_2_BRIGHTNESS_PATH));
         TorchBrightness2.setOnPreferenceChangeListener(this);
+
+        mSpeakerGain = (SecureSettingCustomSeekBarPreference) findPreference(PREF_Speaker_GAIN);
+        mSpeakerGain.setOnPreferenceChangeListener(this);
 
         mHeadphoneGain = (SecureSettingCustomSeekBarPreference) findPreference(PREF_HEADPHONE_GAIN);
         mHeadphoneGain.setOnPreferenceChangeListener(this);
@@ -227,6 +233,10 @@ public class DeviceSettings extends PreferenceFragment implements
 
             case PREF_USB_FASTCHARGE:
                 FileUtils.setValue(USB_FASTCHARGE_PATH, (boolean) value);
+                break;
+
+            case PREF_SPEAKER_GAIN:
+                FileUtils.setValue(HEADPHONE_GAIN_PATH, value);
                 break;
 
             case PREF_HEADPHONE_GAIN:
