@@ -19,7 +19,7 @@ public class DeviceSettings extends PreferenceFragment implements
     // Fingerprint options
     private static final String CATEGORY_FINGERPRINT_OPTIONS = "fp_options";
     public static final String PREF_FPWAKEUP = "fpwakeup";
-    public static final String FPWAKEUP_PATH = "/sys/devices/soc.0/fpc_fpc1020.110/enable_wakeup";
+    public static final String FPWAKEUP_PATH = "/sys/devices/soc.0/fpc_fpc1020.110/wakeup_enable";
 
     // Dirac
     private static final String PREF_ENABLE_DIRAC = "dirac_enabled";
@@ -89,6 +89,10 @@ public class DeviceSettings extends PreferenceFragment implements
         TorchBrightness2.setEnabled(FileUtils.fileWritable(TORCH_2_BRIGHTNESS_PATH));
         TorchBrightness2.setOnPreferenceChangeListener(this);
 
+        SecureSettingSwitchPreference fpwakeup = (SecureSettingSwitchPreference) findPreference(PREF_FPWAKEUP);
+        fpwakeup.setChecked(FileUtils.getFileValueAsBoolean(FPWAKEUP_PATH, false));
+        fpwakeup.setOnPreferenceChangeListener(this);
+
         mSpeakerGain = (SecureSettingCustomSeekBarPreference) findPreference(PREF_Speaker_GAIN);
         mSpeakerGain.setOnPreferenceChangeListener(this);
 
@@ -150,7 +154,7 @@ public class DeviceSettings extends PreferenceFragment implements
 
         if (FileUtils.fileWritable(FPWAKEUP_PATH)) {
             SecureSettingSwitchPreference fpwakeup = (SecureSettingSwitchPreference) findPreference(PREF_FPWAKEUP);
-            fpwakeup.setChecked(FileUtils.getFileValueAsBoolean(FPWAKEUP_PATH, false));
+            fpwakeup.setChecked(FileUtils.getFileValueAsBoolean(FPWAKEUP_PATH, true));
             fpwakeup.setOnPreferenceChangeListener(this);
         } else {
             getPreferenceScreen().removePreference(findPreference(CATEGORY_FINGERPRINT_OPTIONS));
