@@ -34,6 +34,7 @@
     <string name="qc_limit_summary">Установить лимит зарядки в mA</string>
 
     <!-- Audio amplification -->
+    
     <string name="speaker_gain">Усиление динамика</string>
     <string name="headphone_gain">Усиление наушников</string>
     <string name="microphone_gain">Усиление микрофона</string>

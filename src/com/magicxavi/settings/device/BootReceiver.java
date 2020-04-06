@@ -1,5 +1,5 @@
 package com.magicxavi.settings.device;
-
+import android.util.Log; 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.provider.Settings;
 import com.magicxavi.settings.device.kcal.Utils;
 
 public class BootReceiver extends BroadcastReceiver implements Utils {
-
+    private static final String TAG = "BootReceiver";
     public void onReceive(Context context, Intent intent) {
 
         if (Settings.Secure.getInt(context.getContentResolver(), PREF_ENABLED, 0) == 1) {
@@ -39,9 +39,12 @@ public class BootReceiver extends BroadcastReceiver implements Utils {
 
         //FileUtils.setValue(DeviceSettings.QC_LIMIT_PATH, Settings.Secure.getInt(
         //context.getContentResolver(), DeviceSettings.PREF_QC_LIMIT, 2000) * 1000.0);
+        Log.e(TAG, "Inside BootReceiver 1");
         int gainSpeaker = Settings.Secure.getInt(context.getContentResolver(),
-                DeviceSettings.PREF_SPEAKER_GAIN, 0);
-        FileUtils.setValue(DeviceSettings.SPEAKER_GAIN_PATH, gain);
+                DeviceSettings.PREF_SPEAKER_GAIN, 5);
+        Log.e(TAG, "Inside BootReceiver 2");
+        FileUtils.setValue(DeviceSettings.SPEAKER_GAIN_PATH, gainSpeaker+" ");
+        Log.e(TAG, "Inside BootReceiver 3");
         int gain = Settings.Secure.getInt(context.getContentResolver(),
                 DeviceSettings.PREF_HEADPHONE_GAIN, 0);
         FileUtils.setValue(DeviceSettings.HEADPHONE_GAIN_PATH, gain + " " + gain);

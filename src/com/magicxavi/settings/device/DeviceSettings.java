@@ -6,7 +6,7 @@ import android.os.Bundle;
 import androidx.preference.PreferenceFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
-
+import android.util.Log;
 import com.magicxavi.settings.device.kcal.KCalSettingsActivity;
 import com.magicxavi.settings.device.preferences.SecureSettingCustomSeekBarPreference;
 import com.magicxavi.settings.device.preferences.SecureSettingListPreference;
@@ -19,7 +19,7 @@ public class DeviceSettings extends PreferenceFragment implements
     // Fingerprint options
     private static final String CATEGORY_FINGERPRINT_OPTIONS = "fp_options";
     public static final String PREF_FPWAKEUP = "fpwakeup";
-    public static final String FPWAKEUP_PATH = "/sys/devices/soc.0/fpc_fpc1020.110/wakeup_enable";
+    public static final String FPWAKEUP_PATH = "/sys/devices/soc.0/fpc_fpc1020.110/enable_wakeup";
 
     // Dirac
     private static final String PREF_ENABLE_DIRAC = "dirac_enabled";
@@ -80,7 +80,16 @@ public class DeviceSettings extends PreferenceFragment implements
         setPreferencesFromResource(R.xml.preferences_advanced_controls, rootKey);
 
         String device = FileUtils.getStringProp("ro.build.product", "unknown");
-
+        
+        try {
+            Process su = Runtime.getRuntime().exec("su -c chmod 777 "+SPEAKER_GAIN_PATH);
+            su =  Runtime.getRuntime().exec("su -c chmod 777 "+HEADPHONE_GAIN_PATH);
+            su =  Runtime.getRuntime().exec("su -c chmod 777 "+MICROPHONE_GAIN_PATH);
+        } catch (Exception e) {
+                Log.e("error", " Su", e);
+                e.printStackTrace();
+                
+            }
         SecureSettingCustomSeekBarPreference TorchBrightness1 = (SecureSettingCustomSeekBarPreference) findPreference(PREF_TORCH_BRIGHTNESS_1);
         TorchBrightness1.setEnabled(FileUtils.fileWritable(TORCH_1_BRIGHTNESS_PATH));
         TorchBrightness1.setOnPreferenceChangeListener(this);
@@ -88,13 +97,6 @@ public class DeviceSettings extends PreferenceFragment implements
         SecureSettingCustomSeekBarPreference TorchBrightness2 = (SecureSettingCustomSeekBarPreference) findPreference(PREF_TORCH_BRIGHTNESS_2);
         TorchBrightness2.setEnabled(FileUtils.fileWritable(TORCH_2_BRIGHTNESS_PATH));
         TorchBrightness2.setOnPreferenceChangeListener(this);
-
-        SecureSettingSwitchPreference fpwakeup = (SecureSettingSwitchPreference) findPreference(PREF_FPWAKEUP);
-        fpwakeup.setChecked(FileUtils.getFileValueAsBoolean(FPWAKEUP_PATH, false));
-        fpwakeup.setOnPreferenceChangeListener(this);
-
-        mSpeakerGain = (SecureSettingCustomSeekBarPreference) findPreference(PREF_Speaker_GAIN);
-        mSpeakerGain.setOnPreferenceChangeListener(this);
 
         mHeadphoneGain = (SecureSettingCustomSeekBarPreference) findPreference(PREF_HEADPHONE_GAIN);
         mHeadphoneGain.setOnPreferenceChangeListener(this);
@@ -145,6 +147,9 @@ public class DeviceSettings extends PreferenceFragment implements
         enableDirac.setOnPreferenceChangeListener(this);
         enableDirac.setChecked(enhancerEnabled);
 
+        mSpeakerGain = (SecureSettingCustomSeekBarPreference) findPreference(PREF_SPEAKER_GAIN);
+        mSpeakerGain.setOnPreferenceChangeListener(this);
+        
         SecureSettingListPreference headsetType = (SecureSettingListPreference) findPreference(PREF_HEADSET);
         headsetType.setOnPreferenceChangeListener(this);
 
@@ -154,7 +159,7 @@ public class DeviceSettings extends PreferenceFragment implements
 
         if (FileUtils.fileWritable(FPWAKEUP_PATH)) {
             SecureSettingSwitchPreference fpwakeup = (SecureSettingSwitchPreference) findPreference(PREF_FPWAKEUP);
-            fpwakeup.setChecked(FileUtils.getFileValueAsBoolean(FPWAKEUP_PATH, true));
+            fpwakeup.setChecked(FileUtils.getFileValueAsBoolean(FPWAKEUP_PATH, false));
             fpwakeup.setOnPreferenceChangeListener(this);
         } else {
             getPreferenceScreen().removePreference(findPreference(CATEGORY_FINGERPRINT_OPTIONS));
@@ -240,9 +245,10 @@ public class DeviceSettings extends PreferenceFragment implements
                 break;
 
             case PREF_SPEAKER_GAIN:
-                FileUtils.setValue(HEADPHONE_GAIN_PATH, value);
+                Log.e("DeviceSettings", "case speaker_gain");
+                FileUtils.setValue(SPEAKER_GAIN_PATH, value+" ");
                 break;
-
+                
             case PREF_HEADPHONE_GAIN:
                 FileUtils.setValue(HEADPHONE_GAIN_PATH, value + " " + value);
                 break;

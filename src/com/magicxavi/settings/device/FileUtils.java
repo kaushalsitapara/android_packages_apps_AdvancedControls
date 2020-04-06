@@ -15,12 +15,15 @@ import java.lang.SecurityException;
 
 public class FileUtils {
 
+    private static final String TAG = "FileUtils";
+
     static boolean fileWritable(String filename) {
+    
+        Log.e(TAG, "fileWritable ");
         return fileExists(filename) && new File(filename).canWrite();
     }
 
-    private static final String TAG = "FileUtils";
-
+    
     private FileUtils() {
         // This class is not supposed to be instantiated
     }
@@ -48,6 +51,7 @@ public class FileUtils {
                     reader.close();
                 }
             } catch (IOException e) {
+                Log.e(TAG, "IOException 1", e);
                 // Ignored, not much we can do anyway
             }
         }
@@ -61,23 +65,30 @@ public class FileUtils {
     }
     
     private static boolean fileExists(String filename) {
+        Log.e(TAG, "fileExists called");
         if (filename == null) {
+        Log.e(TAG, "fileExists");
             return false;
         }
+        Log.e(TAG, "fileExists real");
         return new File(filename).exists();
     }
 
     public static void setValue(String path, Boolean value) {
+    Log.e(TAG, "setValue Boolean");
         if (fileWritable(path)) {
             if (path == null) {
+                Log.e(TAG, "setValue Boolean path null");
                 return;
             }
             try {
+                Log.e(TAG, "setValue Boolean writing");
                 FileOutputStream fos = new FileOutputStream(new File(path));
                 fos.write((value ? "1" : "0").getBytes());
                 fos.flush();
                 fos.close();
             } catch (IOException e) {
+                Log.e(TAG, "error boolean",e);
                 e.printStackTrace();
             }
         }
@@ -86,20 +97,26 @@ public class FileUtils {
     public static void setValue(String path, int value) {
         if (fileWritable(path)) {
             if (path == null) {
+                Log.e(TAG, "setValue Int path null");
                 return;
+                
             }
             try {
+            Log.e(TAG, "setValue Int writing");
                 FileOutputStream fos = new FileOutputStream(new File(path));
                 fos.write(Integer.toString(value).getBytes());
                 fos.flush();
                 fos.close();
             } catch (IOException e) {
+                Log.e(TAG, "IOException Int", e);
                 e.printStackTrace();
+                
             }
         }
     }
 
     static void setValue(String path, double value) {
+    Log.e(TAG, "setValue double writing");
         if (fileWritable(path)) {
             if (path == null) {
                 return;
@@ -116,16 +133,20 @@ public class FileUtils {
     }
 
     public static void setValue(String path, String value) {
+     Log.e(TAG, "setValue String writing");
         if (fileWritable(path)) {
             if (path == null) {
+                Log.e(TAG, "setValue Int path null");
                 return;
             }
             try {
+                Log.e(TAG, "setValue String writing");
                 FileOutputStream fos = new FileOutputStream(new File(path));
                 fos.write(value.getBytes());
                 fos.flush();
                 fos.close();
             } catch (IOException e) {
+                Log.e(TAG, "IOException String", e);
                 e.printStackTrace();
             }
         }
